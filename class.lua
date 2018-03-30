@@ -32,7 +32,7 @@ local function include_helper(to, from, seen)
 	elseif seen[from] then
 		return seen[from]
 	end
-
+	
 	seen[from] = to
 	for k,v in pairs(from) do
 		k = include_helper({}, k, seen) -- keys might also be tables
@@ -46,6 +46,12 @@ end
 -- deeply copies `other' into `class'. keys in `other' that are already
 -- defined in `class' are omitted
 local function include(class, other)
+	class.parents[other] = true
+	if type(other.parents) == 'table' then
+		for otherParent,_ in pairs(other.parents) do
+			class.parents[otherParent] = true
+		end
+	end
 	return include_helper(class, other, {})
 end
 
@@ -59,6 +65,12 @@ local function new(class)
 	class = class or {}  -- class can be nil
 	local inc = class.__includes or {}
 	if getmetatable(inc) then inc = {inc} end
+
+	-- Allows for checking if a class inherits from another class using the below syntax
+	-- class.parents[InheritedFrom]
+	-- Will return true if it inherits from it, otherwise will return nil
+	class.parents = {}
+	class.parents[class] = true
 
 	for _, other in ipairs(inc) do
 		if type(other) == "string" then
@@ -96,3 +108,4 @@ end
 -- the module
 return setmetatable({new = new, include = include, clone = clone},
 	{__call = function(_,...) return new(...) end})
+	
