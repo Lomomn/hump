@@ -27,8 +27,8 @@ THE SOFTWARE.
 local _PATH = (...):match('^(.*[%./])[^%.%/]+$') or ''
 local cos, sin = math.cos, math.sin
 
-local camera = {}
-camera.__index = camera
+local camera = Class{}
+-- camera.__index = camera
 
 -- Movement interpolators (for camera locking/windowing)
 camera.smooth = {}
@@ -59,6 +59,13 @@ function camera.smooth.damped(stiffness)
 	end
 end
 
+function camera.init(self, x,y, zoom, rot, smoother)
+	print('init')
+	self.x, self.y  = x or love.graphics.getWidth()/2, y or love.graphics.getHeight()/2
+	self.zoom = zoom or 1
+	self.rot  = rot or 0
+	self.smoother = smoother or camera.smooth.none() -- for locking, see below
+end
 
 local function new(x,y, zoom, rot, smoother)
 	x,y  = x or love.graphics.getWidth()/2, y or love.graphics.getHeight()/2

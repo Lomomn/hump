@@ -1,19 +1,22 @@
+Class = require('lib.hump.class')
 local GameObject = Class{}
 local Vector = require('lib.hump.vector')
 GameObject.scene = nil
-GameObject.screenWidth, GameObject.screenHeight = love.graphics.getDimensions()
+if love then
+    GameObject.screenWidth, GameObject.screenHeight = love.graphics.getDimensions()
+end
 
 function GameObject.init(self, pos, width, height)
     if GameObject.scene == nil then error('GameObject.scene wasn\'t set! Please set it before instantiating any GameObjects') end
-    if GameObject.camera == nil then error('GameObject.camera wasn\'t set! Please set it before instantiating any GameObjects') end
 
     self.pos = pos or Vector(0,0)
     self.vel = Vector(0,0)
+    self.speed = Vector(100,0)
     self.width = width or error('No width provided')
     self.height = height or error('No height provided')
     self.rotation = 0
-    self.rotationPoint = Vector(self.width/2, self.height)
-    
+    self.id = nil
+
     self.alive = true
     self:createBounds()
 end
@@ -26,22 +29,22 @@ end
 
 
 function GameObject.update(self, dt)
-    self.pos = self.pos+self.vel*dt
-    self.bounds:setRotation(math.rad(self.rotation))
-    self.bounds:moveTo(self.pos:unpack())
+    local x,y = (self.vel*dt):unpack()
+    self.bounds:move(x,y)
+    self.pos.x, self.pos.y = self.bounds:bbox()
 end
 
 
 function GameObject.draw(self)
     if self.alive then
-        love.graphics.setColor(0,255,0)
+        love.graphics.setColor(0,1,0)
     else
-        love.graphics.setColor(255,0,0)
+        love.graphics.setColor(1,0,0)
     end
     if debugMode then
-        self.bounds:draw('fill')
+        self.bounds:draw('line')
     end
-    love.graphics.setColor(255,255,255)
+    love.graphics.setColor(1,1,1)
 end
 
 
