@@ -56,15 +56,22 @@ function List.remove(self, object)
 end
 
 
+function List.killAll(self)
+    for object,_ in pairs(self.alive) do
+        object:kill()
+    end
+end
+
+
 function List.update(self, dt)
-    for object, _ in pairs(self.alive) do
+    for object,_ in pairs(self.alive) do
         object:update(dt)
     end
 end
 
 
 function List.draw(self)
-    for object, _ in pairs(self.alive) do
+    for object,_ in pairs(self.alive) do
         object:draw()
     end
 end

@@ -80,6 +80,7 @@ local function new(class)
 	end
 
 	-- class implementation
+	class.__name  = class.__name or nil
 	class.__index = class
 	class.init    = class.init    or class[1] or function() end
 	class.include = class.include or include
@@ -97,7 +98,7 @@ end
 if class_commons ~= false and not common then
 	common = {}
 	function common.class(name, prototype, parent)
-		return new{__includes = {prototype, parent}}
+		return new({__name = name, __includes = {prototype, parent}})
 	end
 	function common.instance(class, ...)
 		return class(...)

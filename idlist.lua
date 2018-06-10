@@ -15,7 +15,7 @@ function List.register(self, object)
     local oldKill, oldRevive = object.kill, object.revive
     object.kill = function(object)
         if type(oldKill) == 'function' then oldKill(object) end
-        if self ~= nil then self:insert(object) end
+        if self ~= nil then self:remove(object.id) end
     end
     object.revive = function(object)
         if type(oldRevive) == 'function' then oldRevive(object) end
@@ -41,6 +41,15 @@ function List.remove(self, id)
     if self.alive[id] ~= nil then
         self.alive[id] = nil
         self.aliveCount = self.aliveCount - 1
+    end
+end
+
+
+function List.killAll(self, excludeID)
+    for _,object in pairs(self.alive) do
+        if object.id ~= excludeID then
+            object:kill()
+        end
     end
 end
 
