@@ -1,4 +1,4 @@
-List = Class{}
+List = Class{__name = 'List'}
 
 function List.init(self)
     self.alive = {}
